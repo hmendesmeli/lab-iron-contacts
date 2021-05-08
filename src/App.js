@@ -1,40 +1,61 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
-import contacts from './contacts.json';
+
+import ActionButtons from './components/ActionButtons/ActionButtons';
+import FormAddContacts from './components/FormAddContacts/FormAddContacts';
+import FormAddContactsWithFormik from './components/FormAddContactsWithFormik/FormAddContactsWithFormik';
+
+import contactsJson from './contacts.json';
+const contactsSlice = contactsJson.splice(0, 5);
 
 function App() {
+  const [contacts, setContacts] = React.useState(contactsSlice);
 
-  const DisplayFiveContacts = (contacts) => {
-
-    let list = [];
-
-    for( let i =0; i <= 4; i++){
-
-      list.push(  
+  const displayFiveContacts = () => {
+    return contacts.map(contact => {
+      return (
         <tr> 
-            <td> <img src={contacts[i].pictureUrl}/> </td>
-            <td>{contacts[i].name} </td>
-            <td>{contacts[i].popularity}  </td>
+          <td><img src={contact.pictureUrl} alt={`${contact.name}`} /></td>
+          <td>{contact.name} </td>
+          <td>{contact.popularity}  </td>
         </tr> 
+      )
+    });
+  };
 
-       )
-    }
-    return list;
+  const addRandomContact = () => {
+    const randomIndex = Math.floor(Math.random() * (contactsJson.length - 1));
+    const randomContact = contactsJson.splice(randomIndex, 1)[0];
+    setContacts([...contacts, randomContact]);
+  };
 
-  }
+  const addCustomContact = (name, pictureUrl, popularity) => {
+    // usar o setContacts aqui dentro
+    const newContactObj = {
+      name,
+      pictureUrl,
+      popularity,
+    };
+
+    setContacts([...contacts, newContactObj]);
+  };
   
   return (
     <div className="App">
       
+      <ActionButtons addRandomContact={addRandomContact} />
+
+      {/* <FormAddContacts addNewContact={addCustomContact} /> */}
+
+      <FormAddContactsWithFormik addNewContact={addCustomContact} />
+
       <table className="">
         <tr>
           <th>Picture </th>
           <th>Name </th>
           <th>Popularity </th>
-          
         </tr>
-
-      {DisplayFiveContacts(contacts)}
+        {displayFiveContacts()}
       </table>
       
     </div>
